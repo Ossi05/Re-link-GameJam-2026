@@ -3,7 +3,9 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Settings")]
-    [SerializeField] float movementSpeed = 12f;
+    [SerializeField] float thrustForce = 1000f;
+    [SerializeField] float turnSpeed = 1000f;
+
 
     [Header("References")]
     [SerializeField] Transform bodyTransform;
@@ -11,11 +13,17 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        MovePlayer();
-    }
+        if (PlayerControls.Instance.IsThrusting())
+        {
+            rb.AddRelativeForce(Vector3.up * thrustForce * Time.fixedDeltaTime);
+        }
 
-    void MovePlayer()
-    {
-        rb.linearVelocity = PlayerControls.Instance.MoveInput * movementSpeed;
+        float rotationInput = PlayerControls.Instance.GetRotationInput();
+
+        if (rotationInput != 0)
+        {
+            rb.AddTorque(turnSpeed * -rotationInput * Time.fixedDeltaTime);
+        }
+
     }
 }

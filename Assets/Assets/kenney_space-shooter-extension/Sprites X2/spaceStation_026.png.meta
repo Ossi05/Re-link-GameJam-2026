@@ -1,0 +1,208 @@
+fileFormatVersion: 2
+guid: b0c7eafaacbfcd3438209c17001c867a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 1109986913840998475
+    second: spaceStation_026_0
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: spaceStation_026_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 552
+        height: 800
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape:
+      - - {x: 23, y: -280}
+        - {x: 23, y: -236}
+        - {x: 56, y: -166}
+        - {x: 49, y: -132}
+        - {x: 36, y: -123}
+        - {x: 36, y: -93}
+        - {x: 50, y: -89}
+        - {x: 54, y: -59}
+        - {x: 36, y: 14}
+        - {x: 37, y: 122}
+        - {x: 59, y: 148}
+        - {x: 110, y: 167}
+        - {x: 194, y: 168}
+        - {x: 203, y: 153}
+        - {x: 265, y: 155}
+        - {x: 276, y: 173}
+        - {x: 276, y: 231}
+        - {x: 259, y: 243}
+        - {x: 203, y: 242}
+        - {x: 191, y: 226}
+        - {x: 113, y: 225}
+        - {x: 68, y: 239}
+        - {x: 55, y: 250}
+        - {x: 40, y: 266}
+        - {x: 41, y: 300}
+        - {x: 55, y: 321}
+        - {x: 54, y: 343}
+        - {x: 63, y: 357}
+        - {x: 62, y: 383}
+        - {x: 43, y: 400}
+        - {x: -28, y: 400}
+        - {x: -47, y: 378}
+        - {x: -38, y: 337}
+        - {x: -32, y: 310}
+        - {x: -19, y: 296}
+        - {x: -21, y: 267}
+        - {x: -47, y: 241}
+        - {x: -67, y: 222}
+        - {x: -141, y: 223}
+        - {x: -156, y: 240}
+        - {x: -242, y: 241}
+        - {x: -274, y: 227}
+        - {x: -276, y: 200}
+        - {x: -273, y: 200}
+        - {x: -276, y: 197}
+        - {x: -274, y: 168}
+        - {x: -243, y: 154}
+        - {x: -155, y: 152}
+        - {x: -140, y: 168}
+        - {x: -65, y: 167}
+        - {x: -20, y: 123}
+        - {x: -21, y: 16}
+        - {x: -38, y: -76}
+        - {x: -20, y: -98}
+        - {x: -21, y: -125}
+        - {x: -36, y: -139}
+        - {x: -36, y: -169}
+        - {x: -4, y: -236}
+        - {x: -4, y: -282}
+        - {x: -23, y: -301}
+        - {x: -20, y: -382}
+        - {x: -4, y: -400}
+        - {x: 26, y: -400}
+        - {x: 39, y: -380}
+        - {x: 37, y: -292}
+      tessellationDetail: 0
+      bones: []
+      spriteID: b4823d89737776f00800000000000000
+      internalID: 1109986913840998475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: e083eec84af76da4191efc5f6b0bc5ff
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      spaceStation_026_0: 1109986913840998475
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
