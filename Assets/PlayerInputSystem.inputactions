@@ -16,6 +16,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "BackwardsThrust",
+                    "type": "Button",
+                    "id": "325ff6b3-4e1f-4949-8ab3-7c5bf126e619",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "AttachCable",
                     "type": "Button",
                     "id": "ef8c400b-a7b9-46ba-8b33-124e81556513",
@@ -65,6 +74,28 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "Thrust",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "81e14e18-8dd2-4533-bf3c-47cd2cd2f069",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Thrust",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "54deeb49-87dd-4d72-8c50-75d16523adb7",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "BackwardsThrust",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

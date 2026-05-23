@@ -9,6 +9,7 @@ public class PlayerControls : MonoBehaviour
 
     public event EventHandler OnAttachCableAction;
 
+    bool isBackwardsThrusting;
     bool isThrusting;
     float rotationInput;
 
@@ -29,6 +30,18 @@ public class PlayerControls : MonoBehaviour
         }
     }
 
+    public void OnBackwardsThrust(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            isBackwardsThrusting = true;
+        }
+        else if (context.canceled)
+        {
+            isBackwardsThrusting = false;
+        }
+    }
+
     public void OnRotate(InputAction.CallbackContext context)
     {
         rotationInput = context.ReadValue<float>();
@@ -46,6 +59,11 @@ public class PlayerControls : MonoBehaviour
     public bool IsThrusting()
     {
         return isThrusting;
+    }
+
+    public bool IsBackwardsThrusting()
+    {
+        return isBackwardsThrusting;
     }
 
     public float GetRotationInput()

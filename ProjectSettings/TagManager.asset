@@ -41,5 +41,17 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Anchor
+    uniqueID: 2664442215
+    locked: 0
+  - name: Capsule
+    uniqueID: 3455235751
+    locked: 0
+  - name: Player
+    uniqueID: 437331747
+    locked: 0
+  - name: LifeSupportHub
+    uniqueID: 4078244985
+    locked: 0
   m_RenderingLayers:
   - Default

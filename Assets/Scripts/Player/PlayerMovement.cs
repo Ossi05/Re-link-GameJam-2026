@@ -3,8 +3,9 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Settings")]
-    [SerializeField] float thrustForce = 1000f;
-    [SerializeField] float turnSpeed = 1000f;
+    [SerializeField] float forwardThrustForce = 3500f;
+    [SerializeField] float backwardsThrustForce = 3500f;
+    [SerializeField] float turnSpeed = 3500f;
 
 
     [Header("References")]
@@ -15,7 +16,12 @@ public class PlayerMovement : MonoBehaviour
     {
         if (PlayerControls.Instance.IsThrusting())
         {
-            rb.AddRelativeForce(Vector3.up * thrustForce * Time.fixedDeltaTime);
+            rb.AddRelativeForce(Vector3.up * forwardThrustForce * Time.fixedDeltaTime);
+        }
+
+        if (PlayerControls.Instance.IsBackwardsThrusting())
+        {
+            rb.AddRelativeForce(Vector3.down * backwardsThrustForce * Time.fixedDeltaTime);
         }
 
         float rotationInput = PlayerControls.Instance.GetRotationInput();

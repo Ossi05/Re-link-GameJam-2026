@@ -135,7 +135,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f88723657553e2143b11953c6dbeae19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  thrustForce: 3500
+  forwardThrustForce: 3500
+  backwardsThrustForce: 3500
   turnSpeed: 3000
   bodyTransform: {fileID: 7151403283248319483}
   rb: {fileID: 8094782119084547700}
@@ -156,8 +157,7 @@ MonoBehaviour:
   interactableLayers:
     serializedVersion: 2
     m_Bits: 256
-  defaultCableLength: 5
-  playerAnchor: {fileID: 6120900284318124580}
+  playerCableAttachPoint: {fileID: 1255015520498818673}
 --- !u!1 &2316120573228267406
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,7 +168,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4580362138506925983}
   - component: {fileID: 1658199085054605156}
-  - component: {fileID: 6120900284318124580}
+  - component: {fileID: 1255015520498818673}
   m_Layer: 8
   m_Name: PlayerCableAttachPoint
   m_TagString: Untagged
@@ -207,7 +207,7 @@ MonoBehaviour:
   color:
     serializedVersion: 2
     rgba: 4278255498
---- !u!114 &6120900284318124580
+--- !u!114 &1255015520498818673
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -216,10 +216,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 2316120573228267406}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e79289dc70cff3743ba7e207c66c284c, type: 3}
+  m_Script: {fileID: 11500000, guid: 074d757dfcbcf9243835976eb375cc55, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AnchorPoint
-  rb: {fileID: 8094782119084547700}
+  m_EditorClassIdentifier: Assembly-CSharp::CableAttachPoint
+  role: 0
+  cableLength: 3
+  startingConnection: {fileID: 0}
+  parentRb: {fileID: 8094782119084547700}
 --- !u!1 &7731563848046267851
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,14 +1,14 @@
 using GogoGaga.OptimizedRopesAndCables;
 using UnityEngine;
 
-// Require both joints so they are guaranteed to be on the GameObject
 [RequireComponent(typeof(DistanceJoint2D), typeof(FixedJoint2D))]
 public class Cable : MonoBehaviour
 {
     [SerializeField] Rope ropeVisuals;
+    [SerializeField] float cableLength = 4f;
 
-    AnchorPoint anchorPoint;
-    TowablePoint towablePoint;
+    CableAttachPoint anchorPoint;
+    CableAttachPoint towablePoint;
     DistanceJoint2D distanceJoint;
     FixedJoint2D fixedJoint;
 
@@ -21,14 +21,14 @@ public class Cable : MonoBehaviour
         fixedJoint.enabled = false;
     }
 
-    public void Connect(AnchorPoint sourceAnchor, TowablePoint targetTowable, float cableLength)
+    public void Connect(CableAttachPoint sourceAnchor, CableAttachPoint targetTowable)
     {
         anchorPoint = sourceAnchor;
         towablePoint = targetTowable;
 
         // 1. Add this cable to the attach points
-        anchorPoint.ConnectToCable(this);
-        towablePoint.ConnectToCable(this);
+        anchorPoint.SetCable(this);
+        towablePoint.SetCable(this);
 
         // 2. Setup the Visual Rope
         if (ropeVisuals != null)
@@ -38,7 +38,7 @@ public class Cable : MonoBehaviour
         }
 
         // 3. Setup the Distance Joint
-        distanceJoint.connectedBody = towablePoint.GetRigidBody();
+        distanceJoint.connectedBody = towablePoint.GetParentRb();
         distanceJoint.autoConfigureConnectedAnchor = false;
         distanceJoint.connectedAnchor = towablePoint.GetLocalAnchorPosition();
         distanceJoint.distance = cableLength;
@@ -47,32 +47,37 @@ public class Cable : MonoBehaviour
         distanceJoint.enabled = true;
 
         // 4. Setup the Fixed Joint
-        fixedJoint.connectedBody = anchorPoint.GetRigidBody();
+        fixedJoint.connectedBody = anchorPoint.GetParentRb();
         fixedJoint.autoConfigureConnectedAnchor = false;
         fixedJoint.anchor = Vector2.zero;
         fixedJoint.connectedAnchor = anchorPoint.GetLocalAnchorPosition();
         fixedJoint.enabled = true;
     }
 
-    public void MoveOwnershipTo(AnchorPoint newTarget)
+    public void MoveOwnershipTo(CableAttachPoint newTarget)
     {
-        anchorPoint.DisconnectCable();
+        anchorPoint.Disconnect();
         anchorPoint = newTarget;
-        anchorPoint.ConnectToCable(this);
+        anchorPoint.SetCable(this);
 
         if (ropeVisuals != null)
         {
             ropeVisuals.SetStartPoint(anchorPoint.transform);
         }
 
-        fixedJoint.connectedBody = anchorPoint.GetRigidBody();
+        fixedJoint.connectedBody = anchorPoint.GetParentRb();
         fixedJoint.connectedAnchor = anchorPoint.GetLocalAnchorPosition();
+    }
+
+    public CableAttachPoint GetTowablePoint()
+    {
+        return towablePoint;
     }
 
     public void Disconnect()
     {
-        if (anchorPoint != null) anchorPoint.DisconnectCable();
-        if (towablePoint != null) towablePoint.DisconnectCable();
+        if (anchorPoint != null) anchorPoint.Disconnect();
+        if (towablePoint != null) towablePoint.Disconnect();
 
         distanceJoint.enabled = false;
         distanceJoint.connectedBody = null;

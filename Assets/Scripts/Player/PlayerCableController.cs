@@ -1,18 +1,26 @@
 using System;
 using UnityEngine;
 
-public class PlayerCableController : MonoBehaviour
+public class PlayerCableController : Singleton<PlayerCableController>
 {
+
     [SerializeField] float interactRadius = 0.5f;
     [SerializeField] float interactDistance = 2f;
     [SerializeField] LayerMask interactableLayers;
 
     [Header("References")]
-    [SerializeField] AnchorPoint playerAnchor;
+    [SerializeField] CableAttachPoint playerCableAttachPoint;
 
-    BaseAttachPoint selectedPoint;
+    CableAttachPoint selectedPoint;
 
-    private void Player_OnInteractAction(object sender, EventArgs e)
+    public event EventHandler<OnSelectedPointChangedEventArgs> OnSelectedPointChanged;
+    public event EventHandler<CableAttachPoint.OnAttachedCableChangedEventArgs> OnAttachedCableChanged;
+    public class OnSelectedPointChangedEventArgs : EventArgs
+    {
+        public CableAttachPoint selectedPoint;
+    }
+
+    void Player_OnInteractAction(object sender, EventArgs e)
     {
         HandleAttachCable();
     }
@@ -20,6 +28,16 @@ public class PlayerCableController : MonoBehaviour
     void Start()
     {
         PlayerControls.Instance.OnAttachCableAction += Player_OnInteractAction;
+        playerCableAttachPoint.OnConnectedCableChanged += PlayerCableAttachPoint_OnConnectedCableChanged;
+    }
+
+    void PlayerCableAttachPoint_OnConnectedCableChanged(object sender, CableAttachPoint.OnAttachedCableChangedEventArgs e)
+    {
+
+        OnAttachedCableChanged?.Invoke(this, new CableAttachPoint.OnAttachedCableChangedEventArgs
+        {
+            attachedCable = e.attachedCable
+        });
     }
 
     void Update()
@@ -37,14 +55,15 @@ public class PlayerCableController : MonoBehaviour
             interactableLayers
         );
 
-        if (raycastHit.collider != null && raycastHit.collider.TryGetComponent(out BaseAttachPoint hitPoint))
+        if (raycastHit.collider != null && raycastHit.collider.TryGetComponent(out CableAttachPoint hitPoint))
         {
-            selectedPoint = hitPoint;
+            SetSelectedPoint(hitPoint);
         }
         else
         {
-            selectedPoint = null;
+            SetSelectedPoint(null);
         }
+
     }
 
     void HandleAttachCable()
@@ -52,28 +71,42 @@ public class PlayerCableController : MonoBehaviour
         if (selectedPoint == null) return;
 
         // The player is looking at a Towable Object
-        if (selectedPoint is TowablePoint towableTarget)
+        if (selectedPoint.IsTowable())
         {
-            if (towableTarget.IsConnected()) return;
+            if (selectedPoint.IsConnected()) return;
 
-            if (!playerAnchor.IsConnected())
+            if (!playerCableAttachPoint.IsConnected())
             {
-                playerAnchor.ConnectTo(towableTarget);
+                playerCableAttachPoint.ConnectTo(selectedPoint);
             }
         }
 
         // The player is looking at an Anchor Point
-        else if (selectedPoint is AnchorPoint newAnchorPoint)
+        else if (selectedPoint.IsAnchor())
         {
-            if (newAnchorPoint == playerAnchor) return;
+            if (selectedPoint == playerCableAttachPoint) return;
 
-            if (playerAnchor.IsConnected())
+            if (playerCableAttachPoint.IsConnected())
             {
-                playerAnchor.MoveOwnershipTo(newAnchorPoint);
+                playerCableAttachPoint.MoveOwnershipTo(selectedPoint);
             }
         }
     }
 
+    void SetSelectedPoint(CableAttachPoint newSelectedPoint)
+    {
+        if (selectedPoint == newSelectedPoint) return;
+        selectedPoint = newSelectedPoint;
+        OnSelectedPointChanged?.Invoke(this, new OnSelectedPointChangedEventArgs
+        {
+            selectedPoint = selectedPoint
+        });
+    }
+
+    public bool IsTowing()
+    {
+        return playerCableAttachPoint.IsConnected();
+    }
 
     void OnDrawGizmos()
     {
