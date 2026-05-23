@@ -18,15 +18,15 @@ public class CableAttachPointVisuals : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         SetColor(notAvailableColor);
+        attachPoint.OnConnectedCableChanged += AttachPoint_OnConnectedCableChanged;
     }
 
     void Start()
     {
         PlayerCableController.Instance.OnSelectedPointChanged += PlayerCableManager_OnSelectedPointChanged;
-        attachPoint.OnConnectedCableChanged += AttachPoint_OnConnectedCableChanged;
     }
 
-    void AttachPoint_OnConnectedCableChanged(object sender, CableAttachPoint.OnAttachedCableChangedEventArgs e)
+    void AttachPoint_OnConnectedCableChanged(object sender, CableAttachPoint.OnConnectedCableChangedEventArgs e)
     {
 
         if (attachPoint.IsConnected())

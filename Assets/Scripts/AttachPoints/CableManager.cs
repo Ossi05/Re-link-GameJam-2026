@@ -13,7 +13,6 @@ public class CableManager : Singleton<CableManager>
         CableAttachPoint towable = point1.role == CableAttachPoint.PointRole.Towable ? point1 : point2;
 
         Cable cable = ObjectPoolManager.SpawnObject(cablePrefab, Vector3.zero, Quaternion.identity, ObjectPoolManager.PoolType.Cable);
-
         // Pass the sorted points to the cable
         cable.Connect(anchor, towable);
     }

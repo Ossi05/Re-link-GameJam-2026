@@ -14,7 +14,7 @@ public class PlayerCableController : Singleton<PlayerCableController>
     CableAttachPoint selectedPoint;
 
     public event EventHandler<OnSelectedPointChangedEventArgs> OnSelectedPointChanged;
-    public event EventHandler<CableAttachPoint.OnAttachedCableChangedEventArgs> OnAttachedCableChanged;
+    public event EventHandler<CableAttachPoint.OnConnectedCableChangedEventArgs> OnAttachedCableChanged;
     public class OnSelectedPointChangedEventArgs : EventArgs
     {
         public CableAttachPoint selectedPoint;
@@ -31,10 +31,10 @@ public class PlayerCableController : Singleton<PlayerCableController>
         playerCableAttachPoint.OnConnectedCableChanged += PlayerCableAttachPoint_OnConnectedCableChanged;
     }
 
-    void PlayerCableAttachPoint_OnConnectedCableChanged(object sender, CableAttachPoint.OnAttachedCableChangedEventArgs e)
+    void PlayerCableAttachPoint_OnConnectedCableChanged(object sender, CableAttachPoint.OnConnectedCableChangedEventArgs e)
     {
 
-        OnAttachedCableChanged?.Invoke(this, new CableAttachPoint.OnAttachedCableChangedEventArgs
+        OnAttachedCableChanged?.Invoke(this, new CableAttachPoint.OnConnectedCableChangedEventArgs
         {
             attachedCable = e.attachedCable
         });

@@ -24,7 +24,7 @@ public class Capsule : MonoBehaviour
         PlayerCableController.Instance.OnAttachedCableChanged += PlayerCableController_OnAttachedCableChanged;
     }
 
-    void PlayerCableController_OnAttachedCableChanged(object sender, CableAttachPoint.OnAttachedCableChangedEventArgs e)
+    void PlayerCableController_OnAttachedCableChanged(object sender, CableAttachPoint.OnConnectedCableChangedEventArgs e)
     {
         Cable attachedCable = e.attachedCable;
         if (attachedCable?.GetTowablePoint() == capsuleCableAttachPoint)

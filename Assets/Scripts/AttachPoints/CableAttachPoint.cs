@@ -15,8 +15,8 @@ public class CableAttachPoint : MonoBehaviour
 
     Cable connectedCable;
 
-    public event EventHandler<OnAttachedCableChangedEventArgs> OnConnectedCableChanged;
-    public class OnAttachedCableChangedEventArgs : EventArgs
+    public event EventHandler<OnConnectedCableChangedEventArgs> OnConnectedCableChanged;
+    public class OnConnectedCableChangedEventArgs : EventArgs
     {
         public Cable attachedCable;
     }
@@ -43,14 +43,18 @@ public class CableAttachPoint : MonoBehaviour
 
     public void Disconnect()
     {
+        if (connectedCable == null) return;
+        Cable cableToDisconnect = connectedCable;
+
         SetCable(null);
+        cableToDisconnect.Disconnect();
     }
     public Rigidbody2D GetParentRb() => parentRb;
     public bool IsConnected() => connectedCable != null;
     public void SetCable(Cable cable)
     {
         connectedCable = cable;
-        OnConnectedCableChanged?.Invoke(this, new OnAttachedCableChangedEventArgs
+        OnConnectedCableChanged?.Invoke(this, new OnConnectedCableChangedEventArgs
         {
             attachedCable = cable
         });
@@ -72,7 +76,13 @@ public class CableAttachPoint : MonoBehaviour
             return;
         }
 
-        connectedCable.MoveOwnershipTo(newTarget);
+        if (this.role != newTarget.role)
+        {
+            Debug.LogWarning($"Transfer failed: Cannot pass a {this.role} cable end to a {newTarget.role} node.");
+            return;
+        }
+
+        connectedCable.MoveOwnershipTo(this, newTarget);
     }
 
     public bool IsAnchor() => role == PointRole.Anchor;

@@ -12,6 +12,8 @@ public class Cable : MonoBehaviour
     DistanceJoint2D distanceJoint;
     FixedJoint2D fixedJoint;
 
+    bool isDisConnected = false;
+
     void Awake()
     {
         distanceJoint = GetComponent<DistanceJoint2D>();
@@ -52,21 +54,33 @@ public class Cable : MonoBehaviour
         fixedJoint.anchor = Vector2.zero;
         fixedJoint.connectedAnchor = anchorPoint.GetLocalAnchorPosition();
         fixedJoint.enabled = true;
+        isDisConnected = false;
     }
 
-    public void MoveOwnershipTo(CableAttachPoint newTarget)
+    public void MoveOwnershipTo(CableAttachPoint oldPoint, CableAttachPoint newTarget)
     {
-        anchorPoint.Disconnect();
-        anchorPoint = newTarget;
-        anchorPoint.SetCable(this);
+        oldPoint.SetCable(null);
 
-        if (ropeVisuals != null)
+        if (anchorPoint == oldPoint)
         {
-            ropeVisuals.SetStartPoint(anchorPoint.transform);
+            anchorPoint = newTarget;
+
+            fixedJoint.connectedBody = anchorPoint.GetParentRb();
+            fixedJoint.connectedAnchor = anchorPoint.GetLocalAnchorPosition();
+
+            if (ropeVisuals != null) ropeVisuals.SetStartPoint(anchorPoint.transform);
+        }
+        else if (towablePoint == oldPoint)
+        {
+            towablePoint = newTarget;
+
+            distanceJoint.connectedBody = towablePoint.GetParentRb();
+            distanceJoint.connectedAnchor = towablePoint.GetLocalAnchorPosition();
+
+            if (ropeVisuals != null) ropeVisuals.SetEndPoint(towablePoint.transform);
         }
 
-        fixedJoint.connectedBody = anchorPoint.GetParentRb();
-        fixedJoint.connectedAnchor = anchorPoint.GetLocalAnchorPosition();
+        newTarget.SetCable(this);
     }
 
     public CableAttachPoint GetTowablePoint()
@@ -76,14 +90,19 @@ public class Cable : MonoBehaviour
 
     public void Disconnect()
     {
-        if (anchorPoint != null) anchorPoint.Disconnect();
-        if (towablePoint != null) towablePoint.Disconnect();
+        if (anchorPoint != null) anchorPoint.SetCable(null);
+        if (towablePoint != null) towablePoint.SetCable(null);
+
+        anchorPoint = null;
+        towablePoint = null;
 
         distanceJoint.enabled = false;
         distanceJoint.connectedBody = null;
+        distanceJoint.connectedAnchor = Vector2.zero;
 
         fixedJoint.enabled = false;
         fixedJoint.connectedBody = null;
+        fixedJoint.connectedAnchor = Vector2.zero;
 
         ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.Cable);
     }

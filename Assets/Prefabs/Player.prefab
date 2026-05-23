@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   forwardThrustForce: 3500
-  backwardsThrustForce: 3500
+  backwardsThrustForce: 2500
   turnSpeed: 3000
   bodyTransform: {fileID: 7151403283248319483}
   rb: {fileID: 8094782119084547700}
@@ -152,11 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4fd332879f6f004db1fa495cbb8b1e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCableController
-  interactRadius: 0.23
-  interactDistance: 3
+  interactRadius: 0.3
+  interactDistance: 2.4
   interactableLayers:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 384
   playerCableAttachPoint: {fileID: 1255015520498818673}
 --- !u!1 &2316120573228267406
 GameObject:
@@ -220,7 +220,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CableAttachPoint
   role: 0
-  cableLength: 3
   startingConnection: {fileID: 0}
   parentRb: {fileID: 8094782119084547700}
 --- !u!1 &7731563848046267851
@@ -300,8 +299,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 437331747
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -354191649082998739, guid: 6dcd92ecb59dd9d4499fa6cdbbf55cdb, type: 3}
