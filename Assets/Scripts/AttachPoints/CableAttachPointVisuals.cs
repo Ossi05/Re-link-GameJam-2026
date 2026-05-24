@@ -28,8 +28,11 @@ public class CableAttachPointVisuals : MonoBehaviour
 
     void AttachPoint_OnConnectedCableChanged(object sender, CableAttachPoint.OnConnectedCableChangedEventArgs e)
     {
-
-        if (attachPoint.IsConnected())
+        if (attachPoint.IsDisabled())
+        {
+            Close();
+        }
+        else if (attachPoint.IsConnected())
         {
             PlayClosingAnimation();
             SetColor(availableColor);
@@ -38,19 +41,18 @@ public class CableAttachPointVisuals : MonoBehaviour
         {
             if (isPlayerLookingAtThisPoint)
             {
-                PlayOpenAnimation();
-                SetColor(availableColor);
+                Open();
             }
             else
             {
-                PlayClosingAnimation();
-                SetColor(notAvailableColor);
+                Close();
             }
         }
     }
 
     void PlayerCableManager_OnSelectedPointChanged(object sender, PlayerCableController.OnSelectedPointChangedEventArgs e)
     {
+        if (attachPoint.IsDisabled()) return;
         CableAttachPoint playerSelectedPoint = e.selectedPoint;
 
         // If we were looking at this point
@@ -60,8 +62,7 @@ public class CableAttachPointVisuals : MonoBehaviour
 
             if (!attachPoint.IsConnected())
             {
-                SetColor(notAvailableColor);
-                PlayClosingAnimation();
+                Close();
             }
         }
 
@@ -72,10 +73,21 @@ public class CableAttachPointVisuals : MonoBehaviour
 
             if (!attachPoint.IsConnected())
             {
-                SetColor(availableColor);
-                PlayOpenAnimation();
+                Open();
             }
         }
+    }
+
+    void Close()
+    {
+        PlayClosingAnimation();
+        SetColor(notAvailableColor);
+    }
+
+    void Open()
+    {
+        PlayOpenAnimation();
+        SetColor(availableColor);
     }
 
     void SetColor(Color32 availableColor)

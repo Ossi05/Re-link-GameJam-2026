@@ -73,7 +73,7 @@ public class PlayerCableController : Singleton<PlayerCableController>
         // The player is looking at a Towable Object
         if (selectedPoint.IsTowable())
         {
-            if (selectedPoint.IsConnected()) return;
+            if (selectedPoint.IsConnected() || selectedPoint.IsDisabled()) return;
 
             if (!playerCableAttachPoint.IsConnected())
             {

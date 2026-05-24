@@ -2,10 +2,13 @@ using System;
 using UnityEngine;
 public class CableAttachPoint : MonoBehaviour
 {
-    public enum PointRole { Anchor, Towable }
+    public enum OwnerType { Other, Player, LifeSupportHub }
+    public enum AttachPointRole { Anchor, Towable }
 
     [Header("Settings")]
-    public PointRole role = PointRole.Towable;
+    [SerializeField] OwnerType ownerType = OwnerType.Other;
+    [SerializeField] AttachPointRole role = AttachPointRole.Towable;
+
 
     [Tooltip("Only Anchors will spawn a cable at Start")]
     [SerializeField] CableAttachPoint startingConnection;
@@ -14,8 +17,11 @@ public class CableAttachPoint : MonoBehaviour
     [SerializeField] Rigidbody2D parentRb;
 
     Cable connectedCable;
+    bool isDisabled;
 
     public event EventHandler<OnConnectedCableChangedEventArgs> OnConnectedCableChanged;
+    public event EventHandler<OnConnectedCableChangedEventArgs> OnCableEndPointChanged;
+
     public class OnConnectedCableChangedEventArgs : EventArgs
     {
         public Cable attachedCable;
@@ -23,7 +29,7 @@ public class CableAttachPoint : MonoBehaviour
 
     void Start()
     {
-        if (role == PointRole.Anchor && startingConnection != null)
+        if (role == AttachPointRole.Anchor && startingConnection != null)
         {
             ConnectTo(startingConnection);
         }
@@ -31,6 +37,7 @@ public class CableAttachPoint : MonoBehaviour
 
     public void ConnectTo(CableAttachPoint otherPoint)
     {
+        if (isDisabled) return;
         if (otherPoint == null) return;
         if (this.role == otherPoint.role)
         {
@@ -53,10 +60,29 @@ public class CableAttachPoint : MonoBehaviour
     public bool IsConnected() => connectedCable != null;
     public void SetCable(Cable cable)
     {
+
+        if (connectedCable != null)
+        {
+            connectedCable.OnCableEndPointChanged -= HandleCableEndPointChanged;
+        }
+
         connectedCable = cable;
+        if (connectedCable != null)
+        {
+            connectedCable.OnCableEndPointChanged += HandleCableEndPointChanged;
+        }
+
         OnConnectedCableChanged?.Invoke(this, new OnConnectedCableChangedEventArgs
         {
-            attachedCable = cable
+            attachedCable = connectedCable
+        });
+    }
+
+    void HandleCableEndPointChanged(object sender, EventArgs e)
+    {
+        OnCableEndPointChanged?.Invoke(this, new OnConnectedCableChangedEventArgs
+        {
+            attachedCable = connectedCable
         });
     }
 
@@ -68,7 +94,7 @@ public class CableAttachPoint : MonoBehaviour
 
     public void MoveOwnershipTo(CableAttachPoint newTarget)
     {
-        if (!IsConnected()) return;
+        if (!IsConnected() || IsDisabled()) return;
 
         if (newTarget.IsConnected())
         {
@@ -82,9 +108,23 @@ public class CableAttachPoint : MonoBehaviour
             return;
         }
 
-        connectedCable.MoveOwnershipTo(this, newTarget);
+        Cable cableToMove = connectedCable;
+
+        cableToMove.MoveOwnershipTo(this, newTarget);
     }
 
-    public bool IsAnchor() => role == PointRole.Anchor;
-    public bool IsTowable() => role == PointRole.Towable;
+    public void Disable()
+    {
+        isDisabled = true;
+        Disconnect();
+    }
+    public bool IsDisabled() => isDisabled;
+
+    public OwnerType GetOwnerType() => ownerType;
+
+    public bool IsAnchor() => role == AttachPointRole.Anchor;
+    public bool IsTowable() => role == AttachPointRole.Towable;
+    public CableAttachPoint GetAnchor() => connectedCable.GetAnchorPoint();
+
+    public AttachPointRole GetRole() => role;
 }

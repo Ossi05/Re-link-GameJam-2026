@@ -1,4 +1,5 @@
 using GogoGaga.OptimizedRopesAndCables;
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(DistanceJoint2D), typeof(FixedJoint2D))]
@@ -12,7 +13,7 @@ public class Cable : MonoBehaviour
     DistanceJoint2D distanceJoint;
     FixedJoint2D fixedJoint;
 
-    bool isDisConnected = false;
+    public event EventHandler OnCableEndPointChanged;
 
     void Awake()
     {
@@ -54,7 +55,6 @@ public class Cable : MonoBehaviour
         fixedJoint.anchor = Vector2.zero;
         fixedJoint.connectedAnchor = anchorPoint.GetLocalAnchorPosition();
         fixedJoint.enabled = true;
-        isDisConnected = false;
     }
 
     public void MoveOwnershipTo(CableAttachPoint oldPoint, CableAttachPoint newTarget)
@@ -81,11 +81,16 @@ public class Cable : MonoBehaviour
         }
 
         newTarget.SetCable(this);
+        OnCableEndPointChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public CableAttachPoint GetTowablePoint()
     {
         return towablePoint;
+    }
+    public CableAttachPoint GetAnchorPoint()
+    {
+        return anchorPoint;
     }
 
     public void Disconnect()
