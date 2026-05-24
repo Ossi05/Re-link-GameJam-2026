@@ -2,15 +2,41 @@ using UnityEngine;
 
 public class OxygenDropOffPoint : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] CableAttachPoint cableAttachPoint;
+
+    private void OnEnable()
     {
-        
+        if (cableAttachPoint != null)
+        {
+            cableAttachPoint.OnConnectionChanged += CableAttachPoint_OnConnectionChanged;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDisable()
     {
-        
+        if (cableAttachPoint != null)
+        {
+            cableAttachPoint.OnConnectionChanged -= CableAttachPoint_OnConnectionChanged;
+        }
+    }
+
+    private void CableAttachPoint_OnConnectionChanged(object sender, CableAttachPoint.OnConnectionChangedEventArgs e)
+    {
+        CableAttachPoint connectedPoint = e.connectedPoint;
+
+        if (connectedPoint == null)
+        {
+            return;
+        }
+
+        CableConnectionType connectedType = connectedPoint.GetPointType();
+
+        if (connectedType == CableConnectionType.OxygenContainer && connectedPoint.TryGetComponentFromParent(out OxygenContainer oxygenContainer))
+        {
+            LifeSupportHub.Instance.AddOxygen(oxygenContainer.GetOxygenAmt());
+            connectedPoint.Disconnect();
+            ObjectPoolManager.ReturnObjectToPool(oxygenContainer.gameObject, ObjectPoolManager.PoolType.OxygenContainer);
+        }
+
     }
 }

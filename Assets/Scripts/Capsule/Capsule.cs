@@ -18,30 +18,36 @@ public class Capsule : MonoBehaviour
     float originMass;
 
     bool isAlive = true;
+    float driftForce;
+    CableConnectionType connectedToType = CableConnectionType.None;
 
     public event EventHandler OnDeath;
 
-    public enum ConnectionState
-    {
-        Disconnected,
-        ConnectedToHub,
-        ConnectedToPlayer,
-        ConnectedToOther
-    }
-    ConnectionState currentConnectionState = ConnectionState.Disconnected;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        originMass = rb.mass;
         oxygen = GetComponent<Oxygen>();
+        originMass = rb.mass;
+        driftForce = outwardDriftForce;
+
     }
 
     void OnEnable()
     {
+        if (oxygen == null)
+        {
+            Debug.LogError("Oxygen component not found on Capsule.");
+            return;
+        }
         oxygen.OnOutOfOxygen += Oxygen_OnOutOfOxygen;
-        capsuleCableAttachPoint.OnConnectedCableChanged += HandleConnectionChanged;
-        capsuleCableAttachPoint.OnCableEndPointChanged += HandleConnectionChanged;
+        capsuleCableAttachPoint.OnConnectionChanged += CapsuleCableAttachPoint_OnConnectionChanged;
+    }
+
+    void OnDisable()
+    {
+        oxygen.OnOutOfOxygen -= Oxygen_OnOutOfOxygen;
+        capsuleCableAttachPoint.OnConnectionChanged -= CapsuleCableAttachPoint_OnConnectionChanged;
     }
 
     void Oxygen_OnOutOfOxygen(object sender, System.EventArgs e)
@@ -52,53 +58,55 @@ public class Capsule : MonoBehaviour
         OnDeath?.Invoke(this, EventArgs.Empty);
     }
 
-    void HandleConnectionChanged(object sender, CableAttachPoint.OnConnectedCableChangedEventArgs e)
+    void CapsuleCableAttachPoint_OnConnectionChanged(object sender, CableAttachPoint.OnConnectionChangedEventArgs e)
     {
-
-        Cable attachedCable = e.attachedCable;
-        if (attachedCable == null)
+        CableAttachPoint connectedPoint = e.connectedPoint;
+        if (connectedPoint == null)
         {
-            UpdateConnectionState(ConnectionState.Disconnected);
+            UpdateConnectionState(CableConnectionType.None);
             return;
         }
 
-        CableAttachPoint anchor = attachedCable.GetAnchorPoint();
-        switch (anchor.GetOwnerType())
+        UpdateConnectionState(connectedPoint.GetPointType());
+    }
+
+    void UpdateConnectionState(CableConnectionType newType)
+    {
+        if (!isAlive) return;
+        connectedToType = newType;
+
+        if (connectedToType == CableConnectionType.Player)
         {
-            case CableAttachPoint.OwnerType.LifeSupportHub:
-                UpdateConnectionState(ConnectionState.ConnectedToHub);
-                break;
-            case CableAttachPoint.OwnerType.Player:
-                UpdateConnectionState(ConnectionState.ConnectedToPlayer);
-                break;
-            default:
-                UpdateConnectionState(ConnectionState.ConnectedToOther);
-                break;
+            rb.angularVelocity = 0f;
+            rb.mass = 1f; // Towed mass
+        }
+        else
+        {
+            rb.mass = originMass;
         }
     }
 
     void Update()
     {
         if (!isAlive) return;
-        if (currentConnectionState != ConnectionState.ConnectedToHub)
+
+        if (connectedToType != CableConnectionType.LifeSupportHub)
         {
             ConsumeOxygen();
+            return;
+        }
+
+
+        if (LifeSupportHub.Instance.HasOxygen() && oxygen.GetCurrentOxygenLevel() < oxygen.GetMaxOxygen())
+        {
+            float oxygenAmt = LifeSupportHub.Instance.GetOxygen(oxygenRefillRatePerSecond * Time.deltaTime);
+            oxygen.Refill(oxygenAmt);
         }
         else
         {
-            if (LifeSupportHub.Instance.HasOxygen())
-            {
-                if (oxygen.GetCurrentOxygenLevel() < oxygen.GetMaxOxygen())
-                {
-                    float oxygenAmt = LifeSupportHub.Instance.GetOxygen(oxygenRefillRatePerSecond * Time.deltaTime);
-                    oxygen.Refill(oxygenAmt);
-                }
-            }
-            else
-            {
-                ConsumeOxygen();
-            }
+            ConsumeOxygen();
         }
+
     }
 
     void ConsumeOxygen()
@@ -108,41 +116,16 @@ public class Capsule : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Calculate direction pointing directly away from the hub
+        // 1. Calculate direction pointing directly away from the hub
         Vector2 directionAwayFromHub = (transform.position - LifeSupportHub.Instance.transform.position).normalized;
 
-        // Calculate the force to apply
-        float appliedForce = (currentConnectionState == ConnectionState.ConnectedToPlayer)
+        // 2. Calculate the force to apply
+        float appliedForce = (connectedToType == CableConnectionType.Player)
             ? playerCableConnectedDriftForce
             : outwardDriftForce;
 
-        // Apply the constant force
+        // 3. Apply the constant force
         rb.AddForce(directionAwayFromHub * appliedForce, ForceMode2D.Force);
-    }
-
-    void UpdateConnectionState(ConnectionState newState)
-    {
-        if (!isAlive) return;
-        currentConnectionState = newState;
-
-        if (currentConnectionState == ConnectionState.ConnectedToPlayer)
-        {
-            float towedMass = 1f;
-            rb.angularVelocity = 0f;
-            rb.mass = towedMass;
-        }
-        else
-        {
-            rb.mass = originMass;
-        }
-    }
-
-
-    void OnDestroy()
-    {
-        capsuleCableAttachPoint.OnConnectedCableChanged -= HandleConnectionChanged;
-        capsuleCableAttachPoint.OnCableEndPointChanged -= HandleConnectionChanged;
-        oxygen.OnOutOfOxygen -= Oxygen_OnOutOfOxygen;
     }
 
 }

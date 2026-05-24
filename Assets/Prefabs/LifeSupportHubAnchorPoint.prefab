@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 994385535023616551, guid: 74c8638010b530942b05f8babd069b61, type: 3}
       propertyPath: m_Name
-      value: AnchorPoint
+      value: LifeSupportHubAnchorPoint
       objectReference: {fileID: 0}
     - target: {fileID: 3517739254365945232, guid: 74c8638010b530942b05f8babd069b61, type: 3}
       propertyPath: m_LocalPosition.x
@@ -51,6 +51,14 @@ PrefabInstance:
     - target: {fileID: 3517739254365945232, guid: 74c8638010b530942b05f8babd069b61, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7904902219775079301, guid: 74c8638010b530942b05f8babd069b61, type: 3}
+      propertyPath: pointType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7904902219775079301, guid: 74c8638010b530942b05f8babd069b61, type: 3}
+      propertyPath: acceptedConnections
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

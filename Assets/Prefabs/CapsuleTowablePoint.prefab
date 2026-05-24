@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &2024099243184157971
+--- !u!1001 &5281139818016983583
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 994385535023616551, guid: 74c8638010b530942b05f8babd069b61, type: 3}
       propertyPath: m_Name
-      value: BaseCableAttachPoint Variant
+      value: CapsuleTowablePoint
       objectReference: {fileID: 0}
     - target: {fileID: 3517739254365945232, guid: 74c8638010b530942b05f8babd069b61, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.11012
+      value: -3.45497
       objectReference: {fileID: 0}
     - target: {fileID: 3517739254365945232, guid: 74c8638010b530942b05f8babd069b61, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.48346
+      value: 1.80348
       objectReference: {fileID: 0}
     - target: {fileID: 3517739254365945232, guid: 74c8638010b530942b05f8babd069b61, type: 3}
       propertyPath: m_LocalPosition.z
@@ -51,6 +51,18 @@ PrefabInstance:
     - target: {fileID: 3517739254365945232, guid: 74c8638010b530942b05f8babd069b61, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7904902219775079301, guid: 74c8638010b530942b05f8babd069b61, type: 3}
+      propertyPath: role
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7904902219775079301, guid: 74c8638010b530942b05f8babd069b61, type: 3}
+      propertyPath: pointType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7904902219775079301, guid: 74c8638010b530942b05f8babd069b61, type: 3}
+      propertyPath: acceptedConnections
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

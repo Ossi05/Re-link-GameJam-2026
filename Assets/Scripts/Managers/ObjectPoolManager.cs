@@ -10,6 +10,7 @@ public class ObjectPoolManager : MonoBehaviour
     {
         None,
         Cable,
+        OxygenContainer,
     }
 
 

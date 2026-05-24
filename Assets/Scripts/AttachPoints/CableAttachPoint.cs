@@ -2,13 +2,15 @@ using System;
 using UnityEngine;
 public class CableAttachPoint : MonoBehaviour
 {
-    public enum OwnerType { Other, Player, LifeSupportHub }
     public enum AttachPointRole { Anchor, Towable }
 
     [Header("Settings")]
-    [SerializeField] OwnerType ownerType = OwnerType.Other;
-    [SerializeField] AttachPointRole role = AttachPointRole.Towable;
+    [Tooltip("What type of object is this point attached to?")]
+    [SerializeField] CableConnectionType pointType = CableConnectionType.None;
+    [Tooltip("What types of objects are allowed to connect to this point?")]
+    [SerializeField] CableConnectionType acceptedConnections = CableConnectionType.Any;
 
+    [SerializeField] AttachPointRole role = AttachPointRole.Towable;
 
     [Tooltip("Only Anchors will spawn a cable at Start")]
     [SerializeField] CableAttachPoint startingConnection;
@@ -19,12 +21,10 @@ public class CableAttachPoint : MonoBehaviour
     Cable connectedCable;
     bool isDisabled;
 
-    public event EventHandler<OnConnectedCableChangedEventArgs> OnConnectedCableChanged;
-    public event EventHandler<OnConnectedCableChangedEventArgs> OnCableEndPointChanged;
-
-    public class OnConnectedCableChangedEventArgs : EventArgs
+    public event EventHandler<OnConnectionChangedEventArgs> OnConnectionChanged;
+    public class OnConnectionChangedEventArgs : EventArgs
     {
-        public Cable attachedCable;
+        public CableAttachPoint connectedPoint;
     }
 
     void Start()
@@ -35,82 +35,84 @@ public class CableAttachPoint : MonoBehaviour
         }
     }
 
+    public bool CanConnectTo(CableAttachPoint otherPoint)
+    {
+        if (isDisabled || otherPoint == null || otherPoint.IsDisabled()) return false;
+        if (this.role == otherPoint.role) return false;
+
+        bool thisAcceptsOther = (acceptedConnections & otherPoint.pointType) != 0;
+        bool otherAcceptsThis = (otherPoint.acceptedConnections & this.pointType) != 0;
+
+        return thisAcceptsOther && otherAcceptsThis;
+    }
+
     public void ConnectTo(CableAttachPoint otherPoint)
     {
-        if (isDisabled) return;
-        if (otherPoint == null) return;
-        if (this.role == otherPoint.role)
+        if (!CanConnectTo(otherPoint))
         {
-            Debug.LogWarning($"Connection failed: Cannot connect a {this.role} to another {otherPoint.role}.");
+            Debug.LogWarning($"Connection failed: {name} cannot connect to {otherPoint.name} due to type or role mismatch.");
             return;
         }
 
         CableManager.Instance.Connect(this, otherPoint);
     }
 
+    public void MoveOwnershipTo(CableAttachPoint newTarget)
+    {
+        if (!IsConnected() || isDisabled) return;
+
+        CableAttachPoint towedPoint = GetConnectedPoint();
+        if (towedPoint == null) return;
+
+        if (!newTarget.CanConnectTo(towedPoint))
+        {
+            Debug.LogWarning($"Move ownership failed: {name} cannot move ownership to {newTarget.name} because it can't connect to the currently towed point.");
+            return;
+        }
+
+        connectedCable.MoveOwnershipTo(this, newTarget);
+    }
+
+    public void SetCable(Cable cable)
+    {
+        if (connectedCable != null)
+            connectedCable.OnCableEndPointChanged -= HandleCableEndpointsChanged;
+
+        connectedCable = cable;
+
+        if (connectedCable != null)
+            connectedCable.OnCableEndPointChanged += HandleCableEndpointsChanged;
+
+        FireConnectionEvent();
+    }
+
+    void HandleCableEndpointsChanged(object sender, EventArgs e)
+    {
+        FireConnectionEvent();
+    }
+
+    void FireConnectionEvent()
+    {
+        OnConnectionChanged?.Invoke(this, new OnConnectionChangedEventArgs
+        {
+            connectedPoint = GetConnectedPoint()
+        });
+    }
+
     public void Disconnect()
     {
         if (connectedCable == null) return;
         Cable cableToDisconnect = connectedCable;
-
         SetCable(null);
         cableToDisconnect.Disconnect();
     }
-    public Rigidbody2D GetParentRb() => parentRb;
-    public bool IsConnected() => connectedCable != null;
-    public void SetCable(Cable cable)
+
+    public CableAttachPoint GetConnectedPoint()
     {
-
-        if (connectedCable != null)
-        {
-            connectedCable.OnCableEndPointChanged -= HandleCableEndPointChanged;
-        }
-
-        connectedCable = cable;
-        if (connectedCable != null)
-        {
-            connectedCable.OnCableEndPointChanged += HandleCableEndPointChanged;
-        }
-
-        OnConnectedCableChanged?.Invoke(this, new OnConnectedCableChangedEventArgs
-        {
-            attachedCable = connectedCable
-        });
-    }
-
-    void HandleCableEndPointChanged(object sender, EventArgs e)
-    {
-        OnCableEndPointChanged?.Invoke(this, new OnConnectedCableChangedEventArgs
-        {
-            attachedCable = connectedCable
-        });
-    }
-
-    public Vector2 GetLocalAnchorPosition()
-    {
-        if (parentRb == null) return Vector2.zero;
-        return parentRb.transform.InverseTransformPoint(transform.position);
-    }
-
-    public void MoveOwnershipTo(CableAttachPoint newTarget)
-    {
-        if (!IsConnected() || IsDisabled()) return;
-
-        if (newTarget.IsConnected())
-        {
-            Debug.LogWarning($"{newTarget.name} is already connected to a cable!");
-            return;
-        }
-
-        if (this.role != newTarget.role)
-        {
-            Debug.LogWarning($"Transfer failed: Cannot pass a {this.role} cable end to a {newTarget.role} node.");
-            return;
-        }
-
-        Cable cableToMove = connectedCable;
-
-        cableToMove.MoveOwnershipTo(this, newTarget);
+        if (connectedCable == null) return null;
+        return role == AttachPointRole.Anchor
+            ? connectedCable.GetTowablePoint()
+            : connectedCable.GetAnchorPoint();
     }
 
     public void Disable()
@@ -118,13 +120,22 @@ public class CableAttachPoint : MonoBehaviour
         isDisabled = true;
         Disconnect();
     }
+
+    public Vector2 GetLocalAnchorPosition() => parentRb ? parentRb.transform.InverseTransformPoint(transform.position) : Vector2.zero;
+    public Rigidbody2D GetParentRb() => parentRb;
+    public CableConnectionType GetPointType() => pointType;
+    public bool IsConnected() => connectedCable != null;
     public bool IsDisabled() => isDisabled;
-
-    public OwnerType GetOwnerType() => ownerType;
-
     public bool IsAnchor() => role == AttachPointRole.Anchor;
     public bool IsTowable() => role == AttachPointRole.Towable;
-    public CableAttachPoint GetAnchor() => connectedCable.GetAnchorPoint();
 
-    public AttachPointRole GetRole() => role;
+    public bool TryGetComponentFromParent<T>(out T component)
+    {
+        if (parentRb == null)
+        {
+            component = default;
+            return false;
+        }
+        return parentRb.TryGetComponent(out component);
+    }
 }

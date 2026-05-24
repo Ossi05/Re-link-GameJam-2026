@@ -219,6 +219,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 074d757dfcbcf9243835976eb375cc55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CableAttachPoint
+  pointType: 1
+  acceptedConnections: 12
   role: 0
   startingConnection: {fileID: 0}
   parentRb: {fileID: 8094782119084547700}

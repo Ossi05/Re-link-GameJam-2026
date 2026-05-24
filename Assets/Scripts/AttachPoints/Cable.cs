@@ -2,6 +2,17 @@ using GogoGaga.OptimizedRopesAndCables;
 using System;
 using UnityEngine;
 
+[Flags]
+public enum CableConnectionType
+{
+    None = 0,
+    Player = 1 << 0,
+    LifeSupportHub = 1 << 1,
+    Capsule = 1 << 2,
+    OxygenContainer = 1 << 3,
+    Any = ~0
+}
+
 [RequireComponent(typeof(DistanceJoint2D), typeof(FixedJoint2D))]
 public class Cable : MonoBehaviour
 {

@@ -57,7 +57,7 @@ public class LifeSupportHub : Singleton<LifeSupportHub>
         return oxygen.GetCurrentOxygenLevel() > 0f;
     }
 
-    public void RefillOxygen(float amt)
+    public void AddOxygen(float amt)
     {
         oxygen.Refill(amt);
     }

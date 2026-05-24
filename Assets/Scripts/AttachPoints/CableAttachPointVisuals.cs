@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CableAttachPointVisuals : MonoBehaviour
+public class CableAttachPointVisuals : BaseCableAttachPointVisuals
 {
     static readonly int OPEN_ANIMATION_TRIGGER = Animator.StringToHash("Open");
     static readonly int CLOSE_ANIMATION_TRIGGER = Animator.StringToHash("Close");
@@ -9,84 +9,31 @@ public class CableAttachPointVisuals : MonoBehaviour
     [SerializeField] Color32 notAvailableColor = Color.red;
 
     [SerializeField] SpriteRenderer statusSpriteRenderer;
-    [SerializeField] CableAttachPoint attachPoint;
 
     Animator animator;
-    bool isPlayerLookingAtThisPoint;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         animator = GetComponent<Animator>();
         SetColor(notAvailableColor);
-        attachPoint.OnConnectedCableChanged += AttachPoint_OnConnectedCableChanged;
     }
 
-    void Start()
+    protected override void OnInteractionAvailable()
     {
-        PlayerCableController.Instance.OnSelectedPointChanged += PlayerCableManager_OnSelectedPointChanged;
+        PlayOpenAnimation();
+        SetColor(availableColor);
     }
 
-    void AttachPoint_OnConnectedCableChanged(object sender, CableAttachPoint.OnConnectedCableChangedEventArgs e)
-    {
-        if (attachPoint.IsDisabled())
-        {
-            Close();
-        }
-        else if (attachPoint.IsConnected())
-        {
-            PlayClosingAnimation();
-            SetColor(availableColor);
-        }
-        else
-        {
-            if (isPlayerLookingAtThisPoint)
-            {
-                Open();
-            }
-            else
-            {
-                Close();
-            }
-        }
-    }
-
-    void PlayerCableManager_OnSelectedPointChanged(object sender, PlayerCableController.OnSelectedPointChangedEventArgs e)
-    {
-        if (attachPoint.IsDisabled()) return;
-        CableAttachPoint playerSelectedPoint = e.selectedPoint;
-
-        // If we were looking at this point
-        if (playerSelectedPoint != attachPoint && isPlayerLookingAtThisPoint)
-        {
-            isPlayerLookingAtThisPoint = false;
-
-            if (!attachPoint.IsConnected())
-            {
-                Close();
-            }
-        }
-
-        // If we are now looking at this point
-        if (playerSelectedPoint == attachPoint)
-        {
-            isPlayerLookingAtThisPoint = true;
-
-            if (!attachPoint.IsConnected())
-            {
-                Open();
-            }
-        }
-    }
-
-    void Close()
+    protected override void OnInteractionUnavailable()
     {
         PlayClosingAnimation();
         SetColor(notAvailableColor);
     }
 
-    void Open()
+    protected override void OnCableConnected()
     {
-        PlayOpenAnimation();
+        PlayClosingAnimation();
         SetColor(availableColor);
     }
 
@@ -107,9 +54,5 @@ public class CableAttachPointVisuals : MonoBehaviour
         animator.SetTrigger(CLOSE_ANIMATION_TRIGGER);
     }
 
-    void OnDestroy()
-    {
-        PlayerCableController.Instance.OnSelectedPointChanged -= PlayerCableManager_OnSelectedPointChanged;
-        attachPoint.OnConnectedCableChanged -= AttachPoint_OnConnectedCableChanged;
-    }
+
 }

@@ -14,7 +14,6 @@ public class PlayerCableController : Singleton<PlayerCableController>
     CableAttachPoint selectedPoint;
 
     public event EventHandler<OnSelectedPointChangedEventArgs> OnSelectedPointChanged;
-    public event EventHandler<CableAttachPoint.OnConnectedCableChangedEventArgs> OnAttachedCableChanged;
     public class OnSelectedPointChangedEventArgs : EventArgs
     {
         public CableAttachPoint selectedPoint;
@@ -28,17 +27,8 @@ public class PlayerCableController : Singleton<PlayerCableController>
     void Start()
     {
         PlayerControls.Instance.OnAttachCableAction += Player_OnInteractAction;
-        playerCableAttachPoint.OnConnectedCableChanged += PlayerCableAttachPoint_OnConnectedCableChanged;
     }
 
-    void PlayerCableAttachPoint_OnConnectedCableChanged(object sender, CableAttachPoint.OnConnectedCableChangedEventArgs e)
-    {
-
-        OnAttachedCableChanged?.Invoke(this, new CableAttachPoint.OnConnectedCableChangedEventArgs
-        {
-            attachedCable = e.attachedCable
-        });
-    }
 
     void Update()
     {
@@ -75,7 +65,7 @@ public class PlayerCableController : Singleton<PlayerCableController>
         {
             if (selectedPoint.IsConnected() || selectedPoint.IsDisabled()) return;
 
-            if (!playerCableAttachPoint.IsConnected())
+            if (!playerCableAttachPoint.IsConnected() && playerCableAttachPoint.CanConnectTo(selectedPoint))
             {
                 playerCableAttachPoint.ConnectTo(selectedPoint);
             }
@@ -86,8 +76,11 @@ public class PlayerCableController : Singleton<PlayerCableController>
         {
             if (selectedPoint == playerCableAttachPoint) return;
 
-            if (playerCableAttachPoint.IsConnected())
+            CableAttachPoint objectWeAreCarrying = playerCableAttachPoint.GetConnectedPoint();
+
+            if (selectedPoint.CanConnectTo(objectWeAreCarrying))
             {
+                // Can drop off the selectedPoint
                 playerCableAttachPoint.MoveOwnershipTo(selectedPoint);
             }
         }
@@ -106,6 +99,11 @@ public class PlayerCableController : Singleton<PlayerCableController>
     public bool IsTowing()
     {
         return playerCableAttachPoint.IsConnected();
+    }
+
+    public CableAttachPoint GetTowedPoint()
+    {
+        return playerCableAttachPoint.GetConnectedPoint();
     }
 
     void OnDrawGizmos()

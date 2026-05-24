@@ -16,19 +16,19 @@ public class PlayerMovement : MonoBehaviour
     {
         if (PlayerControls.Instance.IsThrusting())
         {
-            rb.AddRelativeForce(Vector3.up * forwardThrustForce * Time.fixedDeltaTime);
+            rb.AddRelativeForce(Vector3.up * forwardThrustForce);
         }
 
         if (PlayerControls.Instance.IsBackwardsThrusting())
         {
-            rb.AddRelativeForce(Vector3.down * backwardsThrustForce * Time.fixedDeltaTime);
+            rb.AddRelativeForce(Vector3.down * backwardsThrustForce);
         }
 
         float rotationInput = PlayerControls.Instance.GetRotationInput();
 
         if (rotationInput != 0)
         {
-            rb.AddTorque(turnSpeed * -rotationInput * Time.fixedDeltaTime);
+            rb.AddTorque(turnSpeed * -rotationInput);
         }
 
     }

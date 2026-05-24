@@ -358,6 +358,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Capsule
   oxygenDepletionRatePerSecond: 5
+  oxygenRefillRatePerSecond: 5
   outwardDriftForce: 400
   playerCableConnectedDriftForce: 3
   capsuleCableAttachPoint: {fileID: 6561326994397361877}
@@ -771,7 +772,7 @@ PrefabInstance:
       objectReference: {fileID: 9141109514136819424}
     - target: {fileID: 4937815251074439224, guid: fb7da6a23d62de24bbec3e800cb15aeb, type: 3}
       propertyPath: m_Name
-      value: TowablePoint
+      value: CapsuleTowablePoint
       objectReference: {fileID: 0}
     - target: {fileID: 8762849948543694735, guid: fb7da6a23d62de24bbec3e800cb15aeb, type: 3}
       propertyPath: m_LocalPosition.x
