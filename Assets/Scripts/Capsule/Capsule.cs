@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class Capsule : MonoBehaviour
 {
+    public static event EventHandler OnAnyDeath;
+    public event EventHandler OnDeath;
+    public event EventHandler OnCableDisconnected;
 
     [Header("Settings")]
     [SerializeField] float oxygenDepletionRatePerSecond = 5f;
@@ -18,10 +21,7 @@ public class Capsule : MonoBehaviour
     float originMass;
 
     bool isAlive = true;
-    float driftForce;
     CableConnectionType connectedToType = CableConnectionType.None;
-
-    public event EventHandler OnDeath;
 
 
     void Awake()
@@ -29,8 +29,6 @@ public class Capsule : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         oxygen = GetComponent<Oxygen>();
         originMass = rb.mass;
-        driftForce = outwardDriftForce;
-
     }
 
     void OnEnable()
@@ -56,6 +54,7 @@ public class Capsule : MonoBehaviour
         isAlive = false;
         capsuleCableAttachPoint.Disable();
         OnDeath?.Invoke(this, EventArgs.Empty);
+        OnAnyDeath?.Invoke(this, EventArgs.Empty);
     }
 
     void CapsuleCableAttachPoint_OnConnectionChanged(object sender, CableAttachPoint.OnConnectionChangedEventArgs e)
@@ -64,6 +63,7 @@ public class Capsule : MonoBehaviour
         if (connectedPoint == null)
         {
             UpdateConnectionState(CableConnectionType.None);
+            OnCableDisconnected?.Invoke(this, EventArgs.Empty);
             return;
         }
 
@@ -88,7 +88,7 @@ public class Capsule : MonoBehaviour
 
     void Update()
     {
-        if (!isAlive) return;
+        if (!isAlive || !GameManager.Instance.IsGamePlaying()) return;
 
         if (connectedToType != CableConnectionType.LifeSupportHub)
         {

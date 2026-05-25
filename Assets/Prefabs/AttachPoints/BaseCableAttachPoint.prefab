@@ -143,8 +143,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 074d757dfcbcf9243835976eb375cc55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CableAttachPoint
+  pointType: 0
+  acceptedConnections: -1
   role: 0
-  cableLength: 3
   startingConnection: {fileID: 0}
   parentRb: {fileID: 0}
 --- !u!1 &2061607715480663231
@@ -398,6 +399,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0a871a83ee8aa4a91fcd108f3dcd0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CableAttachPointVisuals
+  attachPoint: {fileID: 7904902219775079301}
   availableColor:
     serializedVersion: 2
     rgba: 4278255360
@@ -405,7 +407,6 @@ MonoBehaviour:
     serializedVersion: 2
     rgba: 4278190335
   statusSpriteRenderer: {fileID: 330245923264773619}
-  attachPoint: {fileID: 7904902219775079301}
 --- !u!1 &7051502055117791156
 GameObject:
   m_ObjectHideFlags: 0

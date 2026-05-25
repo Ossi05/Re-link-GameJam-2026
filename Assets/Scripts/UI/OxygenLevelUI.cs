@@ -11,8 +11,11 @@ public class OxygenLevelUI : MonoBehaviour
     [SerializeField] Color32 warningLevelColor = Color.orange;
     [SerializeField] float warningLevelThreshold = 0.5f;
     [SerializeField] float dangerLevelThreshold = 0.25f;
+    [SerializeField] float flashSpeed = 3f;
 
     Color32 defaultColor;
+    bool isFlashingDanger = false;
+
     void Awake()
     {
         defaultColor = oxygenFillImage.color;
@@ -21,6 +24,15 @@ public class OxygenLevelUI : MonoBehaviour
     {
         oxygen.OnOxygenChanged += Oxygen_OnOxygenChanged;
         UpdateUI();
+    }
+
+    void Update()
+    {
+        if (isFlashingDanger)
+        {
+            float t = Mathf.PingPong(Time.time * flashSpeed, 1f);
+            oxygenFillImage.color = Color.Lerp(dangerLevelColor, warningLevelColor, t);
+        }
     }
 
     void Oxygen_OnOxygenChanged(object sender, EventArgs e)
@@ -34,15 +46,17 @@ public class OxygenLevelUI : MonoBehaviour
         oxygenFillImage.fillAmount = oxygenLevel;
         if (oxygenLevel <= dangerLevelThreshold)
         {
-            oxygenFillImage.color = dangerLevelColor;
+            isFlashingDanger = true;
         }
         else if (oxygenLevel <= warningLevelThreshold)
         {
             oxygenFillImage.color = warningLevelColor;
+            isFlashingDanger = false;
         }
         else
         {
             oxygenFillImage.color = defaultColor;
+            isFlashingDanger = false;
         }
     }
 

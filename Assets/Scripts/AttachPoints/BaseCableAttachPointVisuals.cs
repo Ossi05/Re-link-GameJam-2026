@@ -24,21 +24,21 @@ public abstract class BaseCableAttachPointVisuals : MonoBehaviour
     {
         if (attachPoint.IsDisabled())
         {
-            OnInteractionUnavailable();
+            HandleInteractionUnavailable();
         }
         else if (attachPoint.IsConnected())
         {
-            OnCableConnected();
+            HandleCableConnected();
         }
         else
         {
             if (isPlayerLookingAtThisPoint)
             {
-                OnInteractionAvailable();
+                HandleInteractionAvailable();
             }
             else
             {
-                OnInteractionUnavailable();
+                HandleInteractionUnavailable();
             }
         }
     }
@@ -56,7 +56,7 @@ public abstract class BaseCableAttachPointVisuals : MonoBehaviour
 
             if (!attachPoint.IsConnected())
             {
-                OnInteractionUnavailable();
+                HandleInteractionUnavailable();
             }
             return;
         }
@@ -66,7 +66,7 @@ public abstract class BaseCableAttachPointVisuals : MonoBehaviour
         {
             if (isPlayerLookingAtThisPoint)
             {
-                OnCableConnected();
+                HandleCableConnected();
             }
             return;
         }
@@ -92,11 +92,11 @@ public abstract class BaseCableAttachPointVisuals : MonoBehaviour
 
             if (canPickUpTowable || canDropOffAtAnchor)
             {
-                OnInteractionAvailable();
+                HandleInteractionAvailable();
             }
             else
             {
-                OnInteractionUnavailable();
+                HandleInteractionUnavailable();
             }
         }
     }
@@ -113,7 +113,7 @@ public abstract class BaseCableAttachPointVisuals : MonoBehaviour
         }
     }
 
-    protected abstract void OnInteractionAvailable();
-    protected abstract void OnInteractionUnavailable();
-    protected abstract void OnCableConnected();
+    protected abstract void HandleInteractionAvailable();
+    protected abstract void HandleInteractionUnavailable();
+    protected abstract void HandleCableConnected();
 }

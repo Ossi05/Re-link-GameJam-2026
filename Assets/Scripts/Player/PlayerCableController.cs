@@ -32,11 +32,25 @@ public class PlayerCableController : Singleton<PlayerCableController>
 
     void Update()
     {
+        if (!GameManager.Instance.IsGamePlaying())
+        {
+            if (selectedPoint != null)
+            {
+                SetSelectedPoint(null);
+            }
+            if (playerCableAttachPoint != null)
+            {
+                playerCableAttachPoint.Disconnect();
+            }
+            return;
+        }
+
         HandleInteractions();
     }
 
     void HandleInteractions()
     {
+
         RaycastHit2D raycastHit = Physics2D.CircleCast(
             transform.position,
             interactRadius,

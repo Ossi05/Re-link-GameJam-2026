@@ -19,19 +19,19 @@ public class CableAttachPointVisuals : BaseCableAttachPointVisuals
         SetColor(notAvailableColor);
     }
 
-    protected override void OnInteractionAvailable()
+    protected override void HandleInteractionAvailable()
     {
         PlayOpenAnimation();
         SetColor(availableColor);
     }
 
-    protected override void OnInteractionUnavailable()
+    protected override void HandleInteractionUnavailable()
     {
         PlayClosingAnimation();
         SetColor(notAvailableColor);
     }
 
-    protected override void OnCableConnected()
+    protected override void HandleCableConnected()
     {
         PlayClosingAnimation();
         SetColor(availableColor);

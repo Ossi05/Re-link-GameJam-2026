@@ -79,7 +79,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -2
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0, g: 0.54509807, b: 1, a: 1}
@@ -305,7 +305,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e874ab073b6e3d41a56bf3f692bb410, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OxygenBox
-  oxygenAmount: 75
+  oxygenAmount: 200
   minFloatSpeed: 2
   maxFloatSpeed: 4
   randomSpinTorque: 400
@@ -404,7 +404,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 2, y: 2}
+  m_Size: {x: 2.3, y: 2.3}
   m_EdgeRadius: 0
 --- !u!114 &7291473085821638274
 MonoBehaviour:

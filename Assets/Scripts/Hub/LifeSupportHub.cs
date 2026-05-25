@@ -7,6 +7,9 @@ using UnityEngine;
 public class LifeSupportHub : Singleton<LifeSupportHub>
 {
     [SerializeField] List<CableAttachPoint> attachPoints = new List<CableAttachPoint>();
+    [SerializeField] float initialMinEjectTime = 3f;
+    [SerializeField] float initialMaxEjectTime = 5f;
+    [Space]
     [SerializeField] float minCapsuleEjectTime = 0.5f;
     [SerializeField] float maxCapsuleEjectTime = 1.5f;
     [Header("Oxygen")]
@@ -15,6 +18,11 @@ public class LifeSupportHub : Singleton<LifeSupportHub>
     Oxygen oxygen;
 
     public event EventHandler OnOutOfOxygen;
+    public event EventHandler OnCapsuleEjected;
+    public event EventHandler OnAllCapsulesDied;
+
+    int totalCapsuleAmt = 0;
+    int numCapsulesAlive = 0;
 
     protected override void Awake()
     {
@@ -24,8 +32,26 @@ public class LifeSupportHub : Singleton<LifeSupportHub>
 
     private void Start()
     {
-        StartCoroutine(RandomEjectionRoutine());
+        GameManager.Instance.OnGameStarted += GameManager_OnGameStarted;
+        GameManager.Instance.OnStateChanged += GameManager_OnStateChanged;
         oxygen.OnOutOfOxygen += Oxygen_OnOutOfOxygen;
+        Capsule[] capsulesInScene = FindObjectsByType<Capsule>(FindObjectsSortMode.None);
+        totalCapsuleAmt = capsulesInScene.Length;
+        numCapsulesAlive = totalCapsuleAmt;
+        Capsule.OnAnyDeath += Capsule_OnAnyDeath;
+    }
+
+    void GameManager_OnStateChanged(object sender, EventArgs e)
+    {
+        if (GameManager.Instance.IsGameOver())
+        {
+            StopAllCoroutines();
+        }
+    }
+
+    void GameManager_OnGameStarted(object sender, EventArgs e)
+    {
+        StartCoroutine(RandomEjectionRoutine());
     }
 
     void Oxygen_OnOutOfOxygen(object sender, EventArgs e)
@@ -33,9 +59,18 @@ public class LifeSupportHub : Singleton<LifeSupportHub>
         OnOutOfOxygen?.Invoke(this, EventArgs.Empty);
     }
 
+    void Capsule_OnAnyDeath(object sender, EventArgs e)
+    {
+        numCapsulesAlive--;
+        if (numCapsulesAlive <= 0)
+        {
+            OnAllCapsulesDied?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
     void Update()
     {
-        if (!HasOxygen()) return;
+        if (!HasOxygen() || !GameManager.Instance.IsGamePlaying()) return;
         oxygen.Consume(oxygenDepletionRatePerSecond * Time.deltaTime);
     }
 
@@ -64,28 +99,47 @@ public class LifeSupportHub : Singleton<LifeSupportHub>
 
     IEnumerator RandomEjectionRoutine()
     {
+        // Initial ejection
+        float firstWaitTime = UnityEngine.Random.Range(initialMinEjectTime, initialMaxEjectTime);
+        yield return new WaitForSeconds(firstWaitTime);
+        EjectRandomCapsule();
+
         while (true)
         {
-            // 1. Wait for a random amount of time
             float ejectWaitTime = UnityEngine.Random.Range(minCapsuleEjectTime, maxCapsuleEjectTime);
             yield return new WaitForSeconds(ejectWaitTime);
 
-            // 2. Find all currently connected points
-            List<CableAttachPoint> connectedPoints = new List<CableAttachPoint>();
-            foreach (CableAttachPoint point in attachPoints)
-            {
-                if (point.IsConnected())
-                {
-                    connectedPoints.Add(point);
-                }
-            }
+            EjectRandomCapsule();
+        }
+    }
 
-            // 3. Pick a random connected point and eject it
-            if (connectedPoints.Count > 0)
+    void EjectRandomCapsule()
+    {
+        List<CableAttachPoint> connectedPoints = new List<CableAttachPoint>();
+
+        foreach (CableAttachPoint point in attachPoints)
+        {
+            if (point.IsConnected())
             {
-                int randomIndex = UnityEngine.Random.Range(0, connectedPoints.Count);
-                connectedPoints[randomIndex].Disconnect();
+                connectedPoints.Add(point);
             }
         }
+
+        if (connectedPoints.Count > 0)
+        {
+            int randomIndex = UnityEngine.Random.Range(0, connectedPoints.Count);
+            connectedPoints[randomIndex].Disconnect();
+            OnCapsuleEjected?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public int GetNumCapsulesAlive()
+    {
+        return numCapsulesAlive;
+    }
+
+    public int GetTotalCapsuleAmt()
+    {
+        return totalCapsuleAmt;
     }
 }

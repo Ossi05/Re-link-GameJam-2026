@@ -8,6 +8,7 @@ public class PlayerControls : MonoBehaviour
     public static PlayerControls Instance;
 
     public event EventHandler OnAttachCableAction;
+    public event EventHandler OnGamePauseAction;
 
     bool isBackwardsThrusting;
     bool isThrusting;
@@ -52,6 +53,15 @@ public class PlayerControls : MonoBehaviour
         if (context.started)
         {
             OnAttachCableAction?.Invoke(this, EventArgs.Empty);
+        }
+
+    }
+
+    public void OnPause(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            OnGamePauseAction?.Invoke(this, EventArgs.Empty);
         }
 
     }

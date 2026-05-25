@@ -16,6 +16,9 @@ public enum CableConnectionType
 [RequireComponent(typeof(DistanceJoint2D), typeof(FixedJoint2D))]
 public class Cable : MonoBehaviour
 {
+    public static event EventHandler OnAnyCableConnected;
+    public static event EventHandler OnAnyCableChangedOwnership;
+
     [SerializeField] Rope ropeVisuals;
     [SerializeField] float cableLength = 4f;
 
@@ -66,6 +69,7 @@ public class Cable : MonoBehaviour
         fixedJoint.anchor = Vector2.zero;
         fixedJoint.connectedAnchor = anchorPoint.GetLocalAnchorPosition();
         fixedJoint.enabled = true;
+        OnAnyCableConnected?.Invoke(this, EventArgs.Empty);
     }
 
     public void MoveOwnershipTo(CableAttachPoint oldPoint, CableAttachPoint newTarget)
@@ -93,6 +97,7 @@ public class Cable : MonoBehaviour
 
         newTarget.SetCable(this);
         OnCableEndPointChanged?.Invoke(this, EventArgs.Empty);
+        OnAnyCableChangedOwnership?.Invoke(this, EventArgs.Empty);
     }
 
     public CableAttachPoint GetTowablePoint()

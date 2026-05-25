@@ -42,9 +42,22 @@ public class PlayArea : Singleton<PlayArea>
     public float GetHeight() => height;
     public Vector2 GetBounds() => new Vector2(width, height);
 
+    public bool IsOutOfBounds(Vector2 position)
+    {
+        float halfWidth = width / 2f;
+        float halfHeight = height / 2f;
+        Vector2 localPosition = position - (Vector2)transform.position;
+
+        return localPosition.x < -halfWidth ||
+               localPosition.x > halfWidth ||
+               localPosition.y < -halfHeight ||
+               localPosition.y > halfHeight;
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(transform.position, new Vector3(width, height, 0f));
     }
+
 }

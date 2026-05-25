@@ -12,17 +12,17 @@ public class OxygenContainerVisuals : BaseCableAttachPointVisuals
         defaultColor = spriteRenderer.color;
     }
 
-    protected override void OnCableConnected()
+    protected override void HandleCableConnected()
     {
         SetColor(selectedColor);
     }
 
-    protected override void OnInteractionAvailable()
+    protected override void HandleInteractionAvailable()
     {
         SetColor(selectedColor);
     }
 
-    protected override void OnInteractionUnavailable()
+    protected override void HandleInteractionUnavailable()
     {
         SetColor(defaultColor);
     }

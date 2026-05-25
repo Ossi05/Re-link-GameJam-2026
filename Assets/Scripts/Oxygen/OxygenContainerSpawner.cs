@@ -17,11 +17,12 @@ public class OxygenContainerSpawner : MonoBehaviour
 
     void Awake()
     {
-        SetRandomSpawnTime();
+        spawnTime = 2; // First spawn happens after 2 seconds
     }
 
     void Update()
     {
+        if (!GameManager.Instance.IsGamePlaying()) return;
         spawnTimer += Time.deltaTime;
 
         if (spawnTimer >= spawnTime)
