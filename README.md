@@ -3,6 +3,7 @@
 Check out the game here: https://itch.io/jam/gamedevtv-jam-2026/rate/4612073#post-16161389
 
 Assets used:
+
 https://assetstore.unity.com/packages/tools/physics/optimized-ropes-and-cables-tool-287164
 
 https://www.kenney.nl/assets/space-shooter-remastered
