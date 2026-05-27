@@ -98,21 +98,18 @@ public class OxygenContainer : MonoBehaviour
             timeWaiting += checkInterval;
         }
 
-        if (!successfullyEntered)
+        if (!successfullyEntered && !cableAttachPoint.IsConnected())
         {
-            if (cableAttachPoint.IsConnected()) cableAttachPoint.Disconnect();
-
             ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.OxygenContainer);
             yield break;
         }
 
         // 2. Wait for the oxygenContainer to exit the playarea
-        while (!PlayArea.Instance.IsOutOfBounds(transform.position))
+        while (!PlayArea.Instance.IsOutOfBounds(transform.position) || cableAttachPoint.IsConnected())
         {
             yield return waitDelay;
         }
 
-        if (cableAttachPoint.IsConnected()) cableAttachPoint.Disconnect();
         ObjectPoolManager.ReturnObjectToPool(gameObject, ObjectPoolManager.PoolType.OxygenContainer);
     }
 
